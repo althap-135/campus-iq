@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CampusFlow — Resource Allocation System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css?v=fixed3"/>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Brand -->
+    <div class="sb-brand">
+      <div class="sb-logo">⚡</div>
+      <div>
+        <div class="sb-title">CampusFlow</div>
+        <div class="sb-sub">Resource Allocation System</div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="sb-section-label">NAVIGATION</div>
+    <nav class="sb-nav">
+      <div class="nav-link active" data-page="dashboard">
+        <span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span>
+        <span class="nav-text">Dashboard</span>
+      </div>
+      <div class="nav-link" data-page="book">
+        <span class="nav-icon"><i class="fa-solid fa-calendar-plus"></i></span>
+        <span class="nav-text">Book Facility</span>
+      </div>
+      <div class="nav-link" data-page="schedule">
+        <span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span>
+        <span class="nav-text">Schedule</span>
+      </div>
+      <div class="nav-link" data-page="conflicts">
+        <span class="nav-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+        <span class="nav-text">Conflicts</span>
+        <span class="nav-badge" id="conflict-badge">2</span>
+      </div>
+      <div class="nav-link" data-page="analytics">
+        <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+        <span class="nav-text">Analytics</span>
+      </div>
+      <div class="nav-link" data-page="admin">
+        <span class="nav-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+        <span class="nav-text">Admin Panel</span>
+      </div>
+    </nav>
+
+    <!-- Facility Status Legend -->
+    <div class="sb-section-label" style="margin-top: 14px;">FACILITY STATUS</div>
+    <div class="sb-status-legend">
+      <div class="sb-legend-item"><span class="dot-green"></span> Available</div>
+      <div class="sb-legend-item"><span class="dot-red"></span> In Use</div>
+      <div class="sb-legend-item"><span class="dot-amber"></span> Partial</div>
+      <div class="sb-legend-item"><span class="dot-gray"></span> Maintenance</div>
+    </div>
+
+    <!-- Bottom Architectural Silhouette & User Info -->
+    <div class="sb-bottom">
+      <div class="sb-bottom-art"></div>
+      <div class="sb-user-card" id="sidebar-user-chip" onclick="showUserSwitchModal()">
+        <div class="sb-user-avatar" id="sb-user-avatar">AU</div>
+        <div>
+          <div class="sb-user-name" id="sb-user-name">Admin User</div>
+          <div class="sb-user-role" id="sb-user-role">Administrator</div>
+        </div>
+        <div class="sb-logout-btn" title="Switch User / Logout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══ MAIN WRAPPER ═════════════════════════════════════════ -->
+  <div class="main-wrap">
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-icon-box">
+          <i class="fa-solid fa-building-columns"></i>
+        </div>
+        <span class="topbar-title" id="topbar-title">Campus Resource Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <!-- Live Clock Pill -->
+        <div class="live-pill">
+          <span class="live-dot"></span>
+          LIVE &nbsp;<span id="live-clock" style="font-variant-numeric: tabular-nums;">01:01:09 pm</span>
+        </div>
+
+        <!-- New Booking Button -->
+        <button class="btn-new-booking" onclick="navigate('book')">
+          <i class="fa-solid fa-plus"></i> New Booking
+        </button>
+
+        <!-- Notification Bell -->
+        <div class="notif-bell-btn" onclick="toast('2 active booking conflicts need your attention', 'warning')" title="Notifications">
+          <i class="fa-regular fa-bell"></i>
+          <span class="notif-dot"></span>
+        </div>
+
+        <!-- Topbar User Profile -->
+        <div class="topbar-user" id="topbar-user" onclick="showUserSwitchModal()">
+          <div class="topbar-avatar" id="topbar-avatar">AU</div>
+          <div>
+            <div class="topbar-user-name" id="topbar-user-name">Admin User</div>
+            <div class="topbar-user-role" id="topbar-user-role">Administrator</div>
+          </div>
+          <i class="fa-solid fa-chevron-down" style="font-size: 9px; color: var(--text-muted); margin-left: 2px;"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content">
+
+      <!-- ═════════ DASHBOARD PAGE ═════════ -->
+      <div id="page-dashboard" class="page active">
+
+        <!-- Hero Row: Welcome Banner + Weather/Clock Widget -->
+        <div class="hero-row">
+          <div class="hero-banner">
+            <div class="hero-tag">Welcome back, Admin! 👋</div>
+            <div class="hero-title">Campus Resource Dashboard</div>
+            <div class="hero-desc">Monitor facility availability, bookings and utilization across campus.</div>
+          </div>
+          <div class="weather-card">
+            <div class="weather-date" id="hero-date">Mon, 29 Sep 2026</div>
+            <div class="weather-time-row">
+              <div class="weather-time" id="hero-time">01:01 PM</div>
+              <div class="weather-sun-icon">☀️</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Stat Cards with Glowing Wave SVGs -->
+        <div id="dash-stats" class="stat-grid"></div>
+
+        <!-- Two Column Main Layout: Facility Status Grid + Active Conflicts -->
+        <div class="dash-columns">
+
+          <!-- Left Column: Facility Status Grid -->
+          <div class="dash-left-col">
+            <div class="sec-card">
+              <div class="sec-header">
+                <div class="sec-title">
+                  <i class="fa-solid fa-building"></i> Facility Status (Live)
+                </div>
+                <button class="btn-view-all" onclick="navigate('schedule')">
+                  View All <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <!-- Visual Facility Cards Grid -->
+              <div id="facility-grid-dash" class="facility-grid"></div>
+            </div>
+
+            <!-- Today's Timeline View -->
+            <div class="sec-card" style="margin-top: 16px;">
+              <div class="sec-header">
+                <div class="sec-title">
+                  <i class="fa-solid fa-calendar-day"></i> Today's Schedule Timeline
+                </div>
+                <span style="font-size: 11.5px; color: var(--text-muted);" id="today-timeline-date">Today</span>
+              </div>
+              <div id="timeline-today" class="timeline-container"></div>
+            </div>
+          </div>
+
+          <!-- Right Column: Active Conflicts & Activity -->
+          <div class="dash-right-col">
+            <!-- Active Conflicts Box -->
+            <div class="sec-card" style="margin-bottom: 16px;">
+              <div class="sec-header">
+                <div class="sec-title" style="color: #f43f5e;">
+                  <i class="fa-solid fa-triangle-exclamation" style="color: #f43f5e;"></i> Active Conflicts
+                </div>
+                <button class="btn-view-all" style="color: #f43f5e; border-color: rgba(244,63,94,0.3); background: rgba(244,63,94,0.08);" onclick="navigate('conflicts')">
+                  View All <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+              <div id="dash-conflicts" class="conflict-list"></div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="sec-card">
+              <div class="sec-header">
+                <div class="sec-title">
+                  <i class="fa-solid fa-clock-rotate-left"></i> Recent Activity
+                </div>
+              </div>
+              <div id="activity-feed"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ═════════ BOOK FACILITY PAGE ═════════ -->
+      <div id="page-book" class="page">
+        <div id="book-container"></div>
+      </div>
+
+      <!-- ═════════ SCHEDULE PAGE ═════════ -->
+      <div id="page-schedule" class="page">
+        <div id="schedule-container"></div>
+      </div>
+
+      <!-- ═════════ CONFLICTS PAGE ═════════ -->
+      <div id="page-conflicts" class="page">
+        <div class="sec-header" style="margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #ffffff;">⚠️ Conflict Manager</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Detect, review and resolve scheduling conflicts automatically</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="Engine.refreshConflictStatuses();renderConflicts();toast('Conflicts re-scanned','info')">
+            <i class="fa-solid fa-rotate"></i> Rescan
+          </button>
+        </div>
+        <div id="conflicts-container"></div>
+      </div>
+
+      <!-- ═════════ ANALYTICS PAGE ═════════ -->
+      <div id="page-analytics" class="page">
+        <div class="sec-header" style="margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #ffffff;">📊 Analytics & Utilization</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Real-time metrics, demand patterns, and facility reports</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="toast('Report exported (simulated)','success')">
+            <i class="fa-solid fa-download"></i> Export CSV
+          </button>
+        </div>
+        <div id="analytics-container"></div>
+      </div>
+
+      <!-- ═════════ ADMIN PAGE ═════════ -->
+      <div id="page-admin" class="page">
+        <div class="sec-header" style="margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #ffffff;">🔧 Administration Panel</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Manage facilities, users, system settings, and approvals</div>
+          </div>
+        </div>
+        <div id="admin-container"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="data.js?v=real_ai"></script>
+<script src="engine.js?v=real_ai"></script>
+<script src="charts.js?v=real_ai"></script>
+<script src="app.js?v=real_ai"></script>
+<script src="ai-assistant.js?v=real_ai"></script>
+
+</body>
+</html>
